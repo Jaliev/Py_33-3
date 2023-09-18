@@ -4,6 +4,8 @@ from aiogram.types.keyboard_button import KeyboardButton
 from aiogram.types.reply_keyboard_markup import ReplyKeyboardMarkup
 from aiogram.types.reply_keyboard_remove import ReplyKeyboardRemove
 from handlers.picture import picture_router
+from text import order_text
+
 
 
 shop_router = Router()
@@ -16,6 +18,9 @@ async def shop(message: types.Message):
                 KeyboardButton(text='Футболки'),
                 KeyboardButton(text='Брюки'),
                 KeyboardButton(text='Куртки')
+            ],
+            [
+                KeyboardButton(text='Оформить заказ')
             ]
         ],
         resize_keyboard=True
@@ -45,3 +50,8 @@ async def jackets(message: types.Message):
     kb = ReplyKeyboardRemove()
     await message.answer('Коллекция курток в нашем магазине:', picture_router,
     reply_markup=kb)
+
+@shop_router.message(F.text == 'Оформить заказ')
+async def order(message: types.Message):
+    kb = ReplyKeyboardRemove()
+    await message.answer(order_text, reply_markup=kb)
