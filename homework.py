@@ -9,14 +9,32 @@ from handlers import (
     shop_router,
     questions_router
 )
+from db.queries import (
+    init_db, create_tables,
+    shoes_tables, t_shirts_tables,
+    trousers_tables, jackets_tables,
+    get_products
+)
+
+async def on_startup(dispatcher):
+    init_db()
+    create_tables()
+    shoes_tables()
+    t_shirts_tables()
+    trousers_tables()
+    jackets_tables()
+    get_products()
 
 
 async def homework():
+    dp.startup.register(on_startup)
+
     dp.include_router(start_router)
     dp.include_router(info_router)
     dp.include_router(picture_router)
     dp.include_router(shop_router)
     dp.include_router(questions_router)
+
     dp.include_router(echo_router)
     await dp.start_polling(bot)
 
