@@ -1,5 +1,6 @@
 import sqlite3
 from pathlib import Path
+from pprint import pprint
 
 
 def init_db():
@@ -15,75 +16,83 @@ def create_tables():
     )
     cursor.execute(
         '''
+        DROP TABLE IF EXISTS category
+        '''
+    )
+    cursor.execute(
+        '''
+        CREATE TABLE IF NOT EXISTS Category (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT
+        )
+        '''
+    )
+    cursor.execute(
+        '''
         CREATE TABLE IF NOT EXISTS product (
             productId INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
-            price INTEGER,
-            picture TEXT
+            price FLOAT,
+            picture TEXT,
+            categoryId INTEGER,
+            FOREIGN KEY (categoryId) REFERENCES Category (id)
             )
         '''
     )
     db.commit()
 
-def shoes_tables():
+def products_tables():
     cursor.execute(
         '''
-        INSERT INTO product (name, price, picture)
-        VALUES ('Кроссовки', 1214, 'images/Кроссовки.jpg'),
-                ('Ботинки', 3407, 'images/Ботинки.jpg'),
-                ('Лоферы', 1989, 'images/Лоферы.jpg'),
-                ('Кеды', 1644, 'images/Кеды.jpg'),
-                ('Сабо', 510, 'images/Сабо.jpg')
+        INSERT INTO Category (name)
+        VALUES ('Обувь'), ('Футболки'), ('Брюки'), ('Куртки')
         '''
     )
-    db.commit()
-
-def t_shirts_tables():
     cursor.execute(
         '''
-        INSERT INTO product (name, price, picture)
-        VALUES ('Мужские футболки', 621, 'images/Мужские.jpg'),
-                ('Женские футболки', 658, 'images/Женские.jpg'),
-                ('Детские футболки для мальчиков', 674, 'images/Детские.jpg'),
-                ('Детские футболки для девочек', 596, 'images/Детские2.jpg')
-        '''
-    )
-    db.commit()
-
-def trousers_tables():
-    cursor.execute(
-        '''
-        INSERT INTO product (name, price, picture)
-        VALUES ('Джоггеры', 2439, 'images/Джоггеры.jpg'),
-                ('Джинсы', 2626, 'images/Джинсы.jpg'),
-                ('Классические брюки', 1255, 'images/Классические.jpg'),
-                ('Спортивные брюки', 1470, 'images/Спортивные.jpg')
-        '''
-    )
-    db.commit()
-
-def jackets_tables():
-    cursor.execute(
-        '''
-        INSERT INTO product (name, price, picture)
-        VALUES ('Бомберы', 3423, 'images/Бомбер.jpg'),
-                ('Кожаные куртки', 2335, 'images/Кожаные.jpg'),
-                ('Демисезонные куртки', 4579, 'images/Демисезонные.jpg'),
-                ('Зимние куртки', 9485, 'images/Зимние.jpg')
+        INSERT INTO product (name, price, picture, categoryId)
+        VALUES ('Кроссовки', 1214.0, '/images/Кроссовки.jpg', 1),
+                ('Ботинки', 3407.0, '/images/Ботинки.jpg', 1),
+                ('Лоферы', 1989.0, '/images/Лоферы.jpg', 1),
+                ('Кеды', 1644.0, '/images/Кеды.jpg', 1),
+                ('Сабо', 510.0, '/images/Сабо.jpg', 1),
+                ('Мужские футболки', 621.0, '/images/Мужские.jpg', 2),
+                ('Женские футболки', 658.0, '/images/Женские.jpg', 2),
+                ('Детские футболки для мальчиков', 674.0, '/images/Детские.jpg', 2),
+                ('Детские футболки для девочек', 596.0, '/images/Детские2.jpg', 2),
+                ('Джоггеры', 2439.0, '/images/Джоггеры.jpg', 3),
+                ('Джинсы', 2626.0, '/images/Джинсы.jpg', 3),
+                ('Классические брюки', 1255.0, '/images/Классические.jpg', 3),
+                ('Спортивные брюки', 1470.0, '/images/Спортивные.jpg', 3),
+                ('Бомберы', 3423.0, '/images/Бомбер.jpg', 4),
+                ('Кожаные куртки', 2335.0, '/images/Кожаные.jpg', 4),
+                ('Демисезонные куртки', 4579.0, '/images/Демисезонные.jpg', 4),
+                ('Зимние куртки', 9485.0, '/images/Зимние.jpg', 4)
         '''
     )
     db.commit()
 
 def get_products():
-    cursor.execute('''SELECT * FROM product''')
+    cursor.execute(
+        '''
+        SELECT p.name, c.name FROM product p JOIN category c ON p.categoryId = c.id
+        '''
+    )
+    return cursor.fetchall()
+
+
+def get_product_by_category(category_id):
+    cursor.execute(
+        '''
+        SELECT * FROM product WHERE categoryId = :c_id
+        ''',
+        {"c_id": category_id},
+    )
     return cursor.fetchall()
 
 
 if __name__ == "__main__":
     init_db()
     create_tables()
-    shoes_tables()
-    t_shirts_tables()
-    trousers_tables()
-    jackets_tables()
-    get_products()
+    products_tables()
+    pprint(get_product_by_category())

@@ -9,22 +9,13 @@ from handlers import (
     shop_router,
     questions_router
 )
-from db.queries import (
-    init_db, create_tables,
-    shoes_tables, t_shirts_tables,
-    trousers_tables, jackets_tables,
-    get_products
-)
+from db.queries import (init_db, create_tables, products_tables)
+
 
 async def on_startup(dispatcher):
     init_db()
     create_tables()
-    shoes_tables()
-    t_shirts_tables()
-    trousers_tables()
-    jackets_tables()
-    get_products()
-
+    products_tables()
 
 async def homework():
     dp.startup.register(on_startup)
