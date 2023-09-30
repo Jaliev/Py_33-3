@@ -21,8 +21,11 @@ from text import (
     tel_num_text,
     gender_text,
     gen_text,
-    end_text
+    end_text,
+    sub_is_text
 )
+from handlers.start import start_router
+from db.queries import save_question
 
 
 questions_router = Router()
@@ -34,6 +37,7 @@ class UserQuestions(StatesGroup):
     tel_number = State()
     gender = State()
     question = State()
+
 
 @questions_router.message(F.text == 'Отмена')
 @questions_router.message(Command('cancel'))
@@ -100,5 +104,8 @@ async def process_gender(message: Message, state: FSMContext):
 async def gender(callback: types.CallbackQuery):
     await callback.message.answer(end_text)
 
-
-
+@start_router.message(F.text == 'Подписаться')
+async def subscribe(message: types.Message, state: FSMContext):
+    await state.update_data(question=message.text)
+    save_question(message.from_user.id)
+    await message.answer(sub_is_text, reply_markup=ReplyKeyboardRemove())

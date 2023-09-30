@@ -2,8 +2,9 @@ from aiogram import types, Router, F
 from aiogram.filters import Command
 from aiogram.types.inline_keyboard_button import InlineKeyboardButton
 from aiogram.types.inline_keyboard_markup import InlineKeyboardMarkup
-from text import start_text
 from handlers.about_us import text
+from text import start_text, sub_text
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 start_router = Router()
@@ -19,11 +20,27 @@ async def start(message: types.Message):
             [
                 InlineKeyboardButton(text='Наш сайт', url='https://global.wildberries.ru/?yandex-source=desktop-maps'),
                 InlineKeyboardButton(text='О нас', callback_data='about us'),
-            ]
+            ],
         ]
     )
     await message.answer(start_text, reply_markup=kb)
+    kb = ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(text='Подписаться')
+            ]
+        ],
+        resize_keyboard=True
+    )
+    await message.answer(sub_text, reply_markup=kb)
 
 @start_router.callback_query(F.data == 'about us')
 async def about(callback: types.CallbackQuery):
     await callback.message.answer(text)
+
+
+
+
+
+
+

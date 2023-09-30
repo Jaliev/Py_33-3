@@ -1,6 +1,7 @@
 import sqlite3
 from pathlib import Path
 from pprint import pprint
+from bot import bot
 
 
 def init_db():
@@ -17,6 +18,14 @@ def create_tables():
     cursor.execute(
         '''
         DROP TABLE IF EXISTS category
+        '''
+    )
+    cursor.execute(
+        '''
+        CREATE TABLE IF NOT EXISTS login_id (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userid INTEGER
+        )
         '''
     )
     cursor.execute(
@@ -89,6 +98,25 @@ def get_product_by_category(category_id):
         {"c_id": category_id},
     )
     return cursor.fetchall()
+
+def save_question(user_id):
+        cursor.execute(
+            '''
+        INSERT INTO login_id (userid)
+        VALUES (:user_id)
+        ''',
+    {'user_id': user_id},
+    )
+
+async def send_reminder(user_id: int):
+    cursor.execute(
+        '''
+        SELECT * FROM login_id WHERE userid = :s_id
+        ''',
+        {"s_id": user_id},
+    )
+    await bot.send_message(user_id, 'Занятие по "Python" начнётся через 5 минут')
+    db.commit()
 
 
 if __name__ == "__main__":

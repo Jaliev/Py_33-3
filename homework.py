@@ -1,13 +1,14 @@
 import asyncio
 import logging
-from bot import bot, dp
+from bot import bot, dp, scheduler
 from handlers import (
     start_router,
     info_router,
     picture_router,
     echo_router,
     shop_router,
-    questions_router
+    questions_router,
+    scheduler_router
 )
 from db.queries import (init_db, create_tables, products_tables)
 
@@ -25,8 +26,11 @@ async def homework():
     dp.include_router(picture_router)
     dp.include_router(shop_router)
     dp.include_router(questions_router)
+    dp.include_router(scheduler_router)
 
     dp.include_router(echo_router)
+
+    scheduler.start()
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
