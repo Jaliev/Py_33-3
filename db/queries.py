@@ -17,6 +17,11 @@ def create_tables():
     )
     cursor.execute(
         '''
+        DROP TABLE IF EXISTS new_cars
+        '''
+    )
+    cursor.execute(
+        '''
         DROP TABLE IF EXISTS product
         '''
     )
@@ -30,6 +35,16 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS admin_id (
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         adminid INTEGER
+        )
+        '''
+    )
+    cursor.execute(
+        '''
+        CREATE TABLE IF NOT EXISTS new_cars (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        price INTEGER,
+        link url
         )
         '''
     )
@@ -108,7 +123,6 @@ def get_products():
         '''
     )
     return cursor.fetchall()
-
 
 def get_product_by_category(category_id):
     cursor.execute(
