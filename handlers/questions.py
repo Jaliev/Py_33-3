@@ -25,7 +25,7 @@ from text import (
     sub_is_text
 )
 from handlers.start import start_router
-from db.queries import save_question
+from db.queries import save_user
 
 
 questions_router = Router()
@@ -107,5 +107,5 @@ async def gender(callback: types.CallbackQuery):
 @start_router.message(F.text == 'Подписаться')
 async def subscribe(message: types.Message, state: FSMContext):
     await state.update_data(question=message.text)
-    save_question(message.from_user.id)
+    save_user(message.from_user.id)
     await message.answer(sub_is_text, reply_markup=ReplyKeyboardRemove())

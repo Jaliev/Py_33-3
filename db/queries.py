@@ -12,6 +12,11 @@ def init_db():
 def create_tables():
     cursor.execute(
         '''
+        DROP TABLE IF EXISTS admin_id
+        '''
+    )
+    cursor.execute(
+        '''
         DROP TABLE IF EXISTS product
         '''
     )
@@ -22,7 +27,15 @@ def create_tables():
     )
     cursor.execute(
         '''
-        CREATE TABLE IF NOT EXISTS login_id (
+        CREATE TABLE IF NOT EXISTS admin_id (
+        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        adminid INTEGER
+        )
+        '''
+    )
+    cursor.execute(
+        '''
+        CREATE TABLE IF NOT EXISTS subscribers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userid INTEGER
         )
@@ -50,6 +63,13 @@ def create_tables():
     )
     db.commit()
 
+def admin_id_tables():
+    cursor.execute(
+        '''
+        INSERT INTO admin_id (adminid)
+        VALUES (1074911421)
+        '''
+    )
 def products_tables():
     cursor.execute(
         '''
@@ -95,14 +115,14 @@ def get_product_by_category(category_id):
         '''
         SELECT * FROM product WHERE categoryId = :c_id
         ''',
-        {"c_id": category_id},
+        {'c_id': category_id},
     )
     return cursor.fetchall()
 
-def save_question(user_id):
+def save_user(user_id):
         cursor.execute(
             '''
-        INSERT INTO login_id (userid)
+        INSERT INTO subscribers (userid)
         VALUES (:user_id)
         ''',
     {'user_id': user_id},
@@ -123,4 +143,5 @@ if __name__ == "__main__":
     init_db()
     create_tables()
     products_tables()
+    admin_id_tables()
     pprint(get_product_by_category())
